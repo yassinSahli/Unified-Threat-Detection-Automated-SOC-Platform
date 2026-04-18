@@ -1,0 +1,87 @@
+Rule id: 1
+config firewall address
+edit "OpenVPN_Server"
+set subnet 192.168.145.102 255.255.255.255
+next
+edit "All_Internet"
+set subnet 0.0.0.0 0.0.0.0
+next
+end
+config firewall service custom
+edit "OpenVPN-UDP"
+set protocol UDP
+set udp-portrange 1194
+next
+end
+
+config firewall policy
+edit 1
+set name "Allow_OpenVPN_Inbound"
+set srcintf "virtual-wan-link"
+set dstintf "port1"
+set srcaddr "All_Internet"
+set dstaddr "OpenVPN_Server"
+set action accept
+set schedule "always"
+set service "OpenVPN-UDP"
+set logtraffic all
+set nat disable
+next
+end
+
+
+
+Rule id: 2
+config firewall address
+    edit "Debian_Host"
+        set subnet 192.168.145.145 255.255.255.255
+    next
+    edit "DebianOrg"
+        set type fqdn
+        set fqdn "debian.org"
+    next
+end
+
+
+
+config firewall policy
+    edit 2
+        set name "Allow_Deb_Outbound"
+        set srcintf "port1"
+        set dstintf "virtual-wan-link"
+        set srcaddr "Debian_Host"
+        set dstaddr "DebianOrg"
+        set action accept
+        set schedule "always"
+        set service "ALL"
+        set logtraffic all
+        set nat enable
+    next
+end
+
+
+Rule id:3
+config firewall address
+    edit "Debian_Host"
+        set subnet 192.168.145.145 255.255.255.255
+    next
+    edit "All_Internet"
+        set subnet 0.0.0.0 0.0.0.0
+    next
+end
+
+
+config firewall policy
+    edit 3
+        set name "Allow_Deb_Inbound"
+        set srcintf "virtual-wan-link"
+        set dstintf "port1"
+        set srcaddr "DebianOrg"
+        set dstaddr "Debian_Host"
+        set action accept
+        set schedule "always"
+        set service "ALL"
+        set logtraffic all
+        set nat disable
+    next
+end

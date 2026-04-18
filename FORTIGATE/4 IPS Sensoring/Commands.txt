@@ -1,0 +1,37 @@
+config ips sensor
+edit "default"
+config entries
+edit 1
+set rule 1
+set status enable
+set log-packet enable
+set action block
+next
+end
+next
+end
+
+
+config firewall profile-group
+edit "IPS_Profile"
+set ips-sensor "default"
+next
+end
+
+
+
+config firewall policy
+edit 1
+set name "Allow_Outbound"
+set srcintf "port1"
+set dstintf "virtual-wan-link"
+set srcaddr "all"
+set dstaddr "all"
+set action accept
+set schedule "always"
+set service "ALL"
+set nat enable
+set inspection-mode proxy
+set profile-group "IPS_Profile"
+next
+end

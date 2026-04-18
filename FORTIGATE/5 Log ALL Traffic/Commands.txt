@@ -1,0 +1,7 @@
+config firewall policy
+edit 1
+set logtraffic all
+next
+end
+execute log filter category traffic
+execute log display
